@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 {
 	DIR *dir;
 	int length = 0;
+	int print = 0;
 	ops *list;
 	struct dirent *read = NULL;
 
@@ -25,7 +26,8 @@ int main(int argc, char *argv[])
 			return (-1);
 		while ((read = readdir(dir)) != NULL)
 		{
-			printf("%s ", read->d_name);
+			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
+				printf("%s ", read->d_name);
 		}
 		printf("\n");
 		closedir(dir);
@@ -51,9 +53,14 @@ int main(int argc, char *argv[])
 			break;
 		while ((read = readdir(dir)) != NULL)
 		{
-			printf("%s ", read->d_name);
+			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
+			{
+				printf("%s ", read->d_name);
+				print += 1;
+			}
 		}
-		printf("\n");
+		if (print != 0)
+			printf("\n");
 
 		/* dir = opendir(argv[length]);*/
 		/* call print function with options in ops data structure that is seperated */
