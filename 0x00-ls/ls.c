@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 		if (dir == NULL)
 		{
 			perror("hls");
-			continue;
+			break;
 		}
 		while ((read = readdir(dir)) != NULL)
 		{
