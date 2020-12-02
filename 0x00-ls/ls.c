@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 	struct dirent *read = NULL;
 
 	list = malloc(sizeof(ops));
+	(void)list;
 
 	if (argc < 2)
 	{
