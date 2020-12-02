@@ -23,7 +23,10 @@ int main(int argc, char *argv[])
 	{
 		dir = opendir(".");
 		if (dir == NULL)
+		{
+			perror("hls");
 			return (-1);
+		}
 		while ((read = readdir(dir)) != NULL)
 		{
 			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
@@ -50,7 +53,9 @@ int main(int argc, char *argv[])
 		/* if (length != list->locationOfDash) { } */
 		dir = opendir(argv[length]);
 		if (dir == NULL)
-			break;
+		{
+			perror("hls");
+		}
 		while ((read = readdir(dir)) != NULL)
 		{
 			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
