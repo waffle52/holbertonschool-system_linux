@@ -18,10 +18,11 @@ typedef struct options {
 	int dot;
 	int longFormat;
 	/* location of args for length to skip */
-	int locationOfDash;
+	int DashExists;
+	/* EXIT value here? */
 } ops;
 
-int print(void);
-int set_options(ops *list);
+void print_info(ops *list, struct dirent *read);
+void set_options(ops *list, char *line);
 
 #endif

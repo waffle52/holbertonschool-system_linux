@@ -1,6 +1,6 @@
 #include "ls.h"
 
-/**
+/**.
  * main - Entry Point
  * @argc:
  * @argv:
@@ -13,11 +13,15 @@ int main(int argc, char *argv[])
 	DIR *dir;
 	int length = 0;
 	int print = 0;
+	int errnum = 0;
+	int exit_status = 0;
+	int dash = 1;
 	ops *list;
+	char *token;
 	struct dirent *read = NULL;
 
 	list = malloc(sizeof(ops));
-	(void)list;
+	list->DashExists = 0;
 
 	if (argc < 2)
 	{
@@ -25,81 +29,103 @@ int main(int argc, char *argv[])
 		if (dir == NULL)
 		{
 			perror("hls");
-			return (-1);
+			return (2);
 		}
 		while ((read = readdir(dir)) != NULL)
 		{
-			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
-				printf("%s ", read->d_name);
+			/* SET option to not print . amd .. */
+			print_info(list, read);
+				/* printf("%s ", read->d_name); */
 		}
 		printf("\n");
 		closedir(dir);
-		return (0);
+		free(list);
+		return (exit_status);
 	}
 	else if (argc >= 2)
 	{
-		/* with options */
-		/* Check for - and then test options set length to next set of */
-		/* Directories to print or don't set and go on to print each directory */
-		/* Set custom data sturcture with options set */
-		/* Check options and set them in struct options / list */
-		/* SET dir to first file that doesnt start with - so probably not argv[1] */
-		/* Call strtok, find element with -, parse that info and see how many args are left, save dash-location of arg to ops */
+		/* Search only length of argc */
+		/* ERROR what if nly dash and no file EX: ls -la */
+		while (dash != argc)
+		{
+			if (strncmp(argv[dash], "-", 1) == 0)
+				break;
+			dash += 1;
+		}
+		if (strncmp(argv[dash], "-", 1) == 0)
+			list->DashExists = 1;
+		if (list->DashExists != 0)
+		{
+			token = strtok(argv[dash], "");
+			set_options(list, token);
+		}
 		length += 1;
 	}
 
 	while (length != argc)
 	{
-		/* if (length != list->locationOfDash) { } */
-		dir = opendir(argv[length]);
-		if (dir == NULL)
+		if (length != dash)
 		{
-			perror("hls");
-			break;
-		}
-		while ((read = readdir(dir)) != NULL)
-		{
-			if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
+			dir = opendir(argv[length]);
+			if (dir == NULL)
 			{
-				printf("%s ", read->d_name);
-				print += 1;
+				errnum = errno;
+				fprintf(stderr, "hls: cannot open directory '%s': %s\n", argv[length], strerror(errnum));
+				exit_status = 2;
+				break;
 			}
+			while ((read = readdir(dir)) != NULL)
+			{
+				
+					/*printf("%s ", read->d_name);*/
+				print_info(list, read);
+					print += 1;
+				
+			}
+			/*if (print != 0)
+			  printf("\n");*/
+			closedir(dir);
 		}
-		if (print != 0)
-			printf("\n");
-
-		/* dir = opendir(argv[length]);*/
-		/* call print function with options in ops data structure that is seperated */
 		length += 1;
 	}
-	closedir(dir);
-
-	return (0);
+	free(list);
+	return (exit_status);
 }
 
-/**
-	 * Step 1: check for arguments....
-	 *      -1      (The numeric digit ``one''.)
-	 Force output to be one entry per line.
-	 This is the default when output is not to a terminal.
-	 *      -a      Include directory entries whose names begin with a dot (.)
-	 *      -A      List all entries except for . and ...
-	 Always set for the super-user.
-	 *      -l      (The lowercase letter ``ell''.)  List in long format.
-	 (See below.)  A total sum for all the file sizes is output on a
-	 line before the long listing.
-
-	 * Step 2: open/dir/files and locations. stat any files if not
-	 * Step 3: Call functions with formatted output.
-	 * Step 4: Free self created structure for info
-*/
-
-int print(void)
+void print_info(ops *list, struct dirent *read)
 {
-	return (0);
+	while (){
+		if (list->dot == 1)
+		{
+			
+		}
+		if (list->newLine == 1)
+			printf("\n");
+	}
+
 }
-int set_options(ops *list)
+void set_options(ops *list, char *line)
 {
-	(void)list;
-	return (0);
+	/* line that has - split with strtok*/
+	size_t i = 1;
+
+	for (i = 1; i < strlen(line); i++)
+	{
+		if (line[i] == '1')
+		{
+			list->newLine = 1;
+		}
+		if (line[i] == 'a')
+		{
+			list->dot = 1;
+		}
+		if (line[i] == 'A')
+		{
+			list->dot = 0;
+		}
+		if (line[i] == 'l')
+		{
+			list->longFormat = 1;
+		}
+	}
 }
