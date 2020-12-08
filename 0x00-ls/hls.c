@@ -74,8 +74,8 @@ void print(int length, int argc, ops *list, char *argv[], int dash)
 		{
 			if (length + 1 == dash)
 				list->spacing = 0;
-			print_info(list, argv[length]);
-			printf("\n");
+			if (print_info(list, argv[length]) == 0)
+				printf("\n");
 		}
 		length += 1;
 	}
@@ -103,10 +103,9 @@ int print_info(ops *list, char *line)
 	if (dir == NULL)
 	{
 		errnum = errno;
+		str = "cannot open directory";
 		if (errnum == 2)
 			str = "cannot access";
-		else
-			str = "cannot open";
 		fprintf(stderr, "hls: %s %s: %s\n", str, line, _str_error(errnum));
 		return (1);
 	}

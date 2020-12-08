@@ -47,4 +47,6 @@ char *_strchr(char *s, char c);
 int _strlen(char *s);
 char *_str_error(int errnum);
 
+
+
 #endif
