@@ -103,6 +103,11 @@ int print_info(ops *list, char *line)
 	if (dir == NULL)
 	{
 		errnum = errno;
+		if (errnum == ENOTDIR)
+		{
+			printf("%s\n", line);
+			return (1);
+		}
 		str = "cannot open directory";
 		if (errnum == 2)
 			str = "cannot access";
