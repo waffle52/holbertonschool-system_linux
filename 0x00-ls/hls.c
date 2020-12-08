@@ -95,37 +95,32 @@ int print_info(ops *list, char *line)
 {
 	struct dirent *read;
 	DIR *dir;
+	char *str;
 	int first_run = 0;
 	int errnum;
 
 	dir = opendir(line);
-
 	if (dir == NULL)
 	{
 		errnum = errno;
-		/* replace cannot access with proper code */
-		fprintf(stderr, "hls: %s %s: %i", "cannot access", line, errnum);
+		if (errnum == 2)
+			str = "cannot access";
+		else
+			str = "cannot open";
+		fprintf(stderr, "hls: %s %s: %s", str, line, _str_error(errnum));
 		return (1);
 	}
 
 	while ((read = readdir(dir)) != NULL)
 	{
 		if (first_run == 0 && list->fileNames == 1)
-		{
 			printf("%s:\n", line);
-		}
 		if (strncmp(read->d_name, ".", 1) == 0 && list->dot == 1)
-		{
 			printf("%s ", read->d_name);
-		}
 		else if (strncmp(read->d_name, ".", 1) != 0)
-		{
 			printf("%s ", read->d_name);
-		}
 		if (list->newLine_each_file == 1)
-		{
 			printf("\n");
-		}
 		first_run += 1;
 	}
 	if (list->spacing == 1)
@@ -164,5 +159,40 @@ void set_options(ops *list, char *line)
 		{
 			list->longFormat = 1;
 		}
+	}
+}
+
+char *_str_error(int errnum)
+{
+	switch (errnum)
+	{
+	case 1:
+		return ("Operation not permitted");
+	case 2:
+		return ("No such file or directory");
+	case 3:
+		return ("No such process");
+	case 4:
+		return ("Interrupted system call");
+	case 5:
+		return ("I/O error");
+	case 6:
+		return ("No such device or address");
+	case 7:
+		return ("Argument list too long");
+	case 8:
+		return ("Exec format error");
+	case 9:
+		return ("No child processes");
+	case 10:
+		return ("Try again");
+	case 11:
+		return ("Out of memory");
+	case 12:
+		return ("Out of memory");
+	case 13:
+		return ("Permission denied");
+	default:
+		return ("");
 	}
 }
