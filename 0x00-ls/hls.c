@@ -162,6 +162,14 @@ void set_options(ops *list, char *line)
 	}
 }
 
+/**
+ * _str_error - print err msg
+ * @errnum: errno number
+ *
+ * Description: Returns message defined by errno)?
+ * Return: msg corresponding to errno code
+ */
+
 char *_str_error(int errnum)
 {
 	switch (errnum)
