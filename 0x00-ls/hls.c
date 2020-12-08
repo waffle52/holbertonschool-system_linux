@@ -103,7 +103,7 @@ int print_info(ops *list, char *line)
 	{
 		errnum = errno;
 		/* replace cannot access with proper code */
-		fprintf(stderr, "hls: %s %s: %s", "cannot access", line, strerror(errnum));
+		fprintf(stderr, "hls: %s %s: %i", "cannot access", line, errnum);
 		return (1);
 	}
 
