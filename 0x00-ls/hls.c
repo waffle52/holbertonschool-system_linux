@@ -107,7 +107,7 @@ int print_info(ops *list, char *line)
 			str = "cannot access";
 		else
 			str = "cannot open";
-		fprintf(stderr, "hls: %s %s: %s", str, line, _str_error(errnum));
+		fprintf(stderr, "hls: %s %s: %s\n", str, line, _str_error(errnum));
 		return (1);
 	}
 
