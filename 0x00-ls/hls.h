@@ -40,5 +40,10 @@ typedef struct options
 void print(int length, int argc, ops *list, char *argv[], int dash);
 int print_info(ops *list, char *line);
 void set_options(ops *list, char *line);
+char *_strtok(char *s, char *delim);
+char *_strpbrk(char *s, char *delims);
+unsigned int _strspn(char *s, char *accept);
+char *_strchr(char *s, char c);
+int _strlen(char *s);
 
 #endif

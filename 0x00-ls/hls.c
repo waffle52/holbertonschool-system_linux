@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	}
 	if (list->DashExists != 0)
 	{
-		token = strtok(argv[dash], "");
+		token = _strtok(argv[dash], "");
 		set_options(list, token);
 	}
 	if ((list->DashExists == 0 && argc >= 3) ||
@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 	print(length, argc, list, argv, dash);
 	return (exit_status);
 }
+
 
 /**
  * print - decide info to print
