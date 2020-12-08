@@ -44,7 +44,7 @@ char *_strtok(char *s, char *delim);
 char *_strpbrk(char *s, char *delims);
 unsigned int _strspn(char *s, char *accept);
 char *_strchr(char *s, char c);
-int _strlen(char *s);
+unsigned int _strlen(char *s);
 char *_str_error(int errnum);
 
 

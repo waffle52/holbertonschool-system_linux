@@ -143,9 +143,9 @@ int print_info(ops *list, char *line)
 void set_options(ops *list, char *line)
 {
 	/* line that has - split with strtok*/
-	size_t i = 1;
+	unsigned int i = 1;
 
-	for (i = 1; i < strlen(line); i++)
+	for (i = 1; i < _strlen(line); i++)
 	{
 		if (line[i] == '1')
 		{

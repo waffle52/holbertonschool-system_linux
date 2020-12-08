@@ -96,7 +96,7 @@ char *_strtok(char *s, char *delim)
  * Return: string length
  */
 
-int _strlen(char *s)
+unsigned int _strlen(char *s)
 {
 	int i = 0;
 
