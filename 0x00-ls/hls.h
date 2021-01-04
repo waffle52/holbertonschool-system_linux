@@ -37,6 +37,8 @@ typedef struct options
 	/* EXIT value here? */
 } ops;
 
+typedef struct dirent info;
+
 void print(int length, int argc, ops *list, char *argv[], int dash);
 int print_info(ops *list, char *line);
 void set_options(ops *list, char *line);
@@ -47,7 +49,7 @@ char *_strchr(char *s, char c);
 unsigned int _strlen(char *s);
 char *_str_error(int errnum);
 void sec_print(int first_run, int length, ops *list, char *line,
-	       struct dirent *read);
+	       info *read);
 
 
 #endif

@@ -144,7 +144,7 @@ int print_info(ops *list, char *line)
  * @read: read data structure with names
  */
 void sec_print(int first_run, int length, ops *list, char *line,
-	       struct dirent *read)
+	       info *read)
 {
 	if (first_run == 1 && list->fileNames == 1)
 	{
