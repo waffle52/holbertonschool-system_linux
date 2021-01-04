@@ -46,7 +46,8 @@ unsigned int _strspn(char *s, char *accept);
 char *_strchr(char *s, char c);
 unsigned int _strlen(char *s);
 char *_str_error(int errnum);
-
+void sec_print(int first_run, int length, ops *list, char *line,
+	       struct dirent *read);
 
 
 #endif

@@ -85,7 +85,7 @@ void print(int length, int argc, ops *list, char *argv[], int dash)
 /**
  * print_info - print data
  * @list: list to format output
- * @line: Current direcotry to open
+ * @line: Current directory to open
  *
  * Description: Prints the info passed to open in argv formatted by list)?
  * Return: 0 (SUCCESS)
@@ -96,7 +96,8 @@ int print_info(ops *list, char *line)
 	struct dirent *read;
 	DIR *dir;
 	char *str;
-	int first_run = 0;
+	int first_run = 1;
+	int length = 0;
 	int errnum;
 
 	dir = opendir(line);
@@ -114,23 +115,58 @@ int print_info(ops *list, char *line)
 		fprintf(stderr, "hls: %s %s: %s\n", str, line, _str_error(errnum));
 		return (1);
 	}
+	while ((read = readdir(dir)) != NULL)
+	{
+		length++;
+	}
+	if (list->dot == 0)
+		length -= 2;
+	dir = opendir(line);
+	read = NULL;
 
 	while ((read = readdir(dir)) != NULL)
 	{
-		if (first_run == 0 && list->fileNames == 1)
-			printf("%s:\n", line);
-		if (strncmp(read->d_name, ".", 1) == 0 && list->dot == 1)
-			printf("%s ", read->d_name);
-		else if (strncmp(read->d_name, ".", 1) != 0)
-			printf("%s ", read->d_name);
-		if (list->newLine_each_file == 1)
-			printf("\n");
+		sec_print(first_run, length, list, line, read);
 		first_run += 1;
 	}
 	if (list->spacing == 1)
 		printf("\n");
 	closedir(dir);
 	return (0);
+}
+
+/**
+ * sec_print - sec print func
+ * @first_run: current state of loop
+ * @length: length of items to print
+ * @list: how to format the output
+ * @line: current directory to open
+ * @read: read data structure with names
+ */
+void sec_print(int first_run, int length, ops *list, char *line,
+	       struct dirent *read)
+{
+	if (first_run == 1 && list->fileNames == 1)
+	{
+		printf("%s:\n", line);
+		if (list->newLine_each_file == 1)
+			printf("\n");
+	}
+	if (strncmp(read->d_name, ".", 1) == 0 && list->dot == 1)
+	{
+		printf("%s ", read->d_name);
+		if (list->newLine_each_file == 1 && first_run != length)
+			printf("\n");
+	}
+	else if (strncmp(read->d_name, ".", 1) != 0)
+	{
+		printf("%s ", read->d_name);
+		if (list->newLine_each_file == 1 && first_run != length)
+		{
+			printf("\n");
+		}
+
+	}
 }
 
 /**
@@ -157,54 +193,11 @@ void set_options(ops *list, char *line)
 		}
 		if (line[i] == 'A')
 		{
-			list->dot = 0;
+			list->dot = 1;
 		}
 		if (line[i] == 'l')
 		{
 			list->longFormat = 1;
 		}
-	}
-}
-
-/**
- * _str_error - print err msg
- * @errnum: errno number
- *
- * Description: Returns message defined by errno)?
- * Return: msg corresponding to errno code
- */
-
-char *_str_error(int errnum)
-{
-	switch (errnum)
-	{
-	case 1:
-		return ("Operation not permitted");
-	case 2:
-		return ("No such file or directory");
-	case 3:
-		return ("No such process");
-	case 4:
-		return ("Interrupted system call");
-	case 5:
-		return ("I/O error");
-	case 6:
-		return ("No such device or address");
-	case 7:
-		return ("Argument list too long");
-	case 8:
-		return ("Exec format error");
-	case 9:
-		return ("No child processes");
-	case 10:
-		return ("Try again");
-	case 11:
-		return ("Out of memory");
-	case 12:
-		return ("Out of memory");
-	case 13:
-		return ("Permission denied");
-	default:
-		return ("");
 	}
 }
