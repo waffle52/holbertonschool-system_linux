@@ -121,9 +121,9 @@ int print_info(ops *list, char *line)
 	}
 	if (list->dot == 0)
 		length -= 2;
+	closedir(dir);
 	dir = opendir(line);
 	read = NULL;
-
 	while ((read = readdir(dir)) != NULL)
 	{
 		sec_print(first_run, length, list, line, read);
