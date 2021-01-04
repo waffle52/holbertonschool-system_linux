@@ -155,13 +155,13 @@ void sec_print(int first_run, int length, ops *list, char *line,
 	if (strncmp(read->d_name, ".", 1) == 0 && list->dot == 1)
 	{
 		printf("%s ", read->d_name);
-		if (list->newLine_each_file == 1 && first_run != length)
+		if (list->newLine_each_file == 1 && first_run < length)
 			printf("\n");
 	}
 	else if (strncmp(read->d_name, ".", 1) != 0)
 	{
 		printf("%s ", read->d_name);
-		if (list->newLine_each_file == 1 && first_run != length)
+		if (list->newLine_each_file == 1 && first_run < length)
 		{
 			printf("\n");
 		}
