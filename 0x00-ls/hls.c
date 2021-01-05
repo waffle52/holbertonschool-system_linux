@@ -167,8 +167,6 @@ void sec_print(int first_run, int length, ops *list, char *line,
 		}
 
 	}
-	if (list->fileNames == 1)
-		printf("\n");
 }
 
 /**
