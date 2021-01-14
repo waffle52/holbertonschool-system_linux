@@ -127,6 +127,11 @@ int print_info(ops *list, char *line)
 	read = NULL;
 	while ((read = readdir(dir)) != NULL)
 	{
+		if (strcmp(read->d_name, "-") == 0)
+		{
+			first_run += 1;
+			continue;
+		}
 		sec_print(first_run, length, list, line, read);
 		first_run += 1;
 	}
