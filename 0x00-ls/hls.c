@@ -127,11 +127,6 @@ int print_info(ops *list, char *line)
 	read = NULL;
 	while ((read = readdir(dir)) != NULL)
 	{
-		if (_strcmp(read->d_name, "-") == 0)
-		{
-			first_run += 1;
-			continue;
-		}
 		sec_print(first_run, length, list, line, read);
 		first_run += 1;
 	}
@@ -183,7 +178,7 @@ void sec_print(int first_run, int length, ops *list, char *line,
 		printf("%s ", read->d_name);
 		if (list->newLine_each_file == 1 && first_run != length)
 		{
-			printf("\n");
+			printf("\n-\n");
 		}
 
 	}
