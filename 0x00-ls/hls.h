@@ -2,6 +2,8 @@
 #define _LS_H_
 
 #include <dirent.h>
+#include <grp.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +12,28 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+
+
+#define TRUE  1
+#define FALSE 0
+
+#define NOCASE 0
+#define CASE   1
+
+#define ASC 10
+#define DES 20
+
+#define PUT 0
+#define GET 1
+
+#define W_INIT 0
+#define W_LN 1
+#define W_UR 2
+#define W_GR 3
+#define W_SZ 4
+#define N_FL 5
+#define N_DI 6
+
 
 /**
  * struct options - data struct
@@ -50,6 +74,6 @@ unsigned int _strlen(char *s);
 char *_str_error(int errnum);
 void sec_print(int first_run, int length, ops *list, char *line,
 	       info *read);
-
+void longFormat(char *line);
 
 #endif

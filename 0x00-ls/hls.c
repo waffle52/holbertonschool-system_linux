@@ -146,6 +146,13 @@ int print_info(ops *list, char *line)
 void sec_print(int first_run, int length, ops *list, char *line,
 	       info *read)
 {
+	if ((list->longFormat == 1 && (strncmp(read->d_name, ".", 1) != 0)) || (list->longFormat == 1 &&
+				      (strncmp(read->d_name, ".", 1) == 0)
+				      && list->dot == 1))
+	{
+		longFormat(line);
+	}
+	
 	if (first_run == 1 && list->fileNames == 1)
 	{
 		printf("%s:\n", line);
@@ -198,6 +205,7 @@ void set_options(ops *list, char *line)
 		if (line[i] == 'l')
 		{
 			list->longFormat = 1;
+			list->newLine_each_file = 1;
 		}
 	}
 }
