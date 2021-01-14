@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
 
 	list = malloc(sizeof(ops));
 	list->fileNames = 0, list->newLine_each_file = 0, list->dot = 0;
-	list->longFormat = 0, list->DashExists = 0, list->spacing = 0;
+	list->longFormat = 0, list->DashExists = 0, list->spacing = 0,
+		list->dotFiles = 0;
 
 	if (argc < 2)
 	{
@@ -165,6 +166,13 @@ void sec_print(int first_run, int length, ops *list, char *line,
 		if (list->newLine_each_file == 1 && first_run != length)
 			printf("\n");
 	}
+	else if (list->dotFiles == 1 && strcmp(read->d_name, "..") != 0 &&
+		 strcmp(read->d_name, ".") != 0)
+	{
+		printf("%s ", read->d_name);
+		if (list->newLine_each_file == 1 && first_run != length)
+			printf("\n");
+	}
 	else if (strncmp(read->d_name, ".", 1) != 0)
 	{
 		printf("%s ", read->d_name);
@@ -200,7 +208,7 @@ void set_options(ops *list, char *line)
 		}
 		if (line[i] == 'A')
 		{
-			list->dot = 1;
+			list->dotFiles = 1;
 		}
 		if (line[i] == 'l')
 		{

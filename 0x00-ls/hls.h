@@ -54,6 +54,7 @@ typedef struct options
 	int newLine_each_file;
 	/* Prints hidden dot files if dot == 1*/
 	int dot;
+	int dotFiles;
 	int longFormat;
 	/* location of args for length to skip */
 	int DashExists;
