@@ -166,8 +166,8 @@ void sec_print(int first_run, int length, ops *list, char *line,
 		if (list->newLine_each_file == 1 && first_run != length)
 			printf("\n");
 	}
-	else if (list->dotFiles == 1 && strcmp(read->d_name, "..") != 0 &&
-		 strcmp(read->d_name, ".") != 0)
+	else if (list->dotFiles == 1 && _strcmp(read->d_name, "..") != 0 &&
+		 _strcmp(read->d_name, ".") != 0)
 	{
 		printf("%s ", read->d_name);
 		if (list->newLine_each_file == 1 && first_run != length)

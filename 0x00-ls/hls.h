@@ -76,5 +76,6 @@ char *_str_error(int errnum);
 void sec_print(int first_run, int length, ops *list, char *line,
 	       info *read);
 void longFormat(char *line);
+int _strcmp(char *s1, char *s2);
 
 #endif
