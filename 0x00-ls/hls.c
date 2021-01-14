@@ -178,7 +178,7 @@ void sec_print(int first_run, int length, ops *list, char *line,
 		printf("%s ", read->d_name);
 		if (list->newLine_each_file == 1 && first_run != length)
 		{
-			printf("\n-\n");
+			printf("\n");
 		}
 
 	}
