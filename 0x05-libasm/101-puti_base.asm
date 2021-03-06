@@ -1,4 +1,3 @@
-
 BITS 64
 	global asm_puti_base
 	extern asm_putc
