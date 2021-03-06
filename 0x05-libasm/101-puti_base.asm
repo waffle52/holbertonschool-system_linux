@@ -75,6 +75,7 @@ while_n:
 	push rax
 	inc r14
 	jmp while_n
+
 done_while_n:
 	jmp done_both_while
 
@@ -95,10 +96,12 @@ while_n_nobase:
 	push rax
 	inc r14
 	jmp while_n_nobase
+
 done_while_n_nobase:
 
 done_both_while:
 	mov r15, r14;	move counter
+
 print_loop:
 	test r15, r15
 	jz done_print_loop
