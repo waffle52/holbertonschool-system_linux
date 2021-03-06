@@ -11,106 +11,52 @@ Where:
   search_string with
 """
 
-import sys
+from sys import argv
+
+USAGE = "USAGE: read_write_heap.py pid search_string replace_string"
 
 
-def print_usage():
-    print("Usage: {} pid search write".format(sys.argv[0]))
-    sys.exit(1)
-
-
-# check usage
-if len(sys.argv) != 4:
-    print_usage()
-
-# get the pid from argv
-pid = int(sys.argv[1])
-if pid <= 0:
-    print_usage()
-search_string = str(sys.argv[2])
-if search_string == "":
-    print_usage()
-write_string = str(sys.argv[3])
-if write_string == "":
-    print_usage()
-
-# open the maps and mem files of the process
-maps_file = "/proc/{}/maps".format(pid)
-print("[*] maps: {}".format(maps_file))
-mem_file = "/proc/{}/mem".format(pid)
-print("[*] mem: {}".format(mem_file))
-
-# try opening the maps file
-try:
-    maps = open('/proc/{}/maps'.format(pid), 'r')
-except IOError as e:
-    print("[ERROR] Can not open file {}:".format(maps_filename))
-    print("\tI/O error({}): {}".format(e.errno, e.strerror))
-    sys.exit(1)
-
-for line in maps:
-    word = line.split(' ')
-    # check if we found the heap
-    if word[-1][:-1] != "[heap]":
-        continue
-    print("[*] Found [heap]:")
-
-    # parse the line
-    addr = word[0]
-    perm = word[1]
-    offset = word[2]
-    device = word[3]
-    inode = word[4]
-    pathname = word[-1][:-1]
-    print("\tpathname = {}".format(pathname))
-    print("\taddresses = {}".format(addr))
-    print("\tpermisions = {}".format(perm))
-    print("\toffset = {}".format(offset))
-    print("\tinode = {}".format(inode))
-
-    # check if there is read and write permission
-    if perm[0] != 'r' or perm[1] != 'w':
-        print("[*] {} does not have read/write permission".format(pathname))
-        maps.close()
-        sys.exit(0)
-
-    # get start and end of the heap in the virtal memory
-    addr = addr.split("-")
-    if len(addr) != 2:
-        print("[*] Wrong addr format")
-        maps.close()
-        sys.exit(1)
-    addr_start = int(addr[0], 16)
-    addr_end = int(addr[1], 16)
-    print("\tAddr start [{:x}] | end [{:x}]".format(addr_start, addr_end))
-
-    # open and read mem
+def parse_maps_file(pid):
+    """parses /proc/PID/maps file for heap info"""
+    heap_start = heap_stop = None
     try:
-        mem_file = open(mem_file, 'rb+')
-    except IOError as e:
-        print("[ERROR] Can not open file {}:".format(mem_file))
-        print("\tI/O error({}): {}".format(e.errno, e.strerror))
-        maps.close()
-        sys.exit(1)
-    # read heap
-    mem_file.seek(addr_start)
-    heap = mem_file.read(addr_end - addr_start)
+        with open("/proc/{:d}/maps".format(pid), "r") as file:
+            for line in file:
+                if line.endswith("[heap]\n"):
+                    heap_start, heap_stop = \
+                        [int(x, 16) for x in line.split(" ")[0].split("-")]
+    except Exception as e:
+        print(e) or exit(1)
+    if not heap_start or not heap_stop:
+        print("[ERROR] Heap address not found.") or exit(1)
+    print("[*] Heap starts at {:02X}".format(heap_start))
+    return heap_start, heap_stop
 
-    # find string
+
+def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
+    """finds search_string in /proc/PID/mem and writes replace_string"""
     try:
-        i = heap.index(bytes(search_string, "ASCII"))
-    except Exception:
-        print("Can't find '{}'".format(search_string))
-        maps.close()
-        mem_file.close()
-        exit(0)
-    print("[*] Found '{}' at {:x}".format(search_string, i))
+        with open("/proc/{:d}/mem".format(pid), "r+b") as f:
+            f.seek(heap_start)
+            data = f.read(heap_stop - heap_start)
+            print("[*] Read {:d} bytes".format(heap_stop - heap_start))
+            string_offset = data.find(search_string.encode())
+            if string_offset > -1:
+                print("[*] String found at {:02X}"
+                      .format(heap_start + string_offset))
+                f.seek(heap_start + string_offset)
+                written = f.write(replace_string.encode() + b'\x00')
+                print("[*] {:d} bytes written!".format(written))
+            else:
+                print(
+                    "[ERROR] String '{:s}' not found in heap."
+                    .format(search_string))
+                exit(1)
+    except Exception as e:
+        print(e) or exit(1)
 
-    # write the new string in memory
-    print("[*] Writing '{}' at {:x}".format(write_string, addr_start + i))
-    mem_file.seek(addr_start + i)
-    mem_file.write(bytes(write_string, "ASCII"))
-
-    # close files
-    maps.close()
-    mem_file.close()
+if __name__ == "__main__":
+    if len(argv) < 4 or len(argv[2]) < len(argv[3]):
+        print(USAGE) or exit(1)
+    heap_start, heap_stop = parse_maps_file(int(argv[1]))
+    update_mem_file(int(argv[1]), argv[2], argv[3], heap_start, heap_stop)
