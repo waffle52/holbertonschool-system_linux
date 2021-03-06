@@ -117,7 +117,7 @@ int printelfh(FILE *fp, char *arg)
 		exit = 1;
 		goto out;
 	}
-	printf("ELF HEADER:\n");
+	printf("ELF Header:\n");
 
 	printmag(hdr);
 	exit = printclass(hdr, arg);
