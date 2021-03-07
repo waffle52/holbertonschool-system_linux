@@ -1,27 +1,31 @@
 #ifndef __GETLINE_H_
 #define __GETLINE_H_
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 #define READ_SIZE 4
 #define BUFF_SIZE 512
 
 /**
- * struct listfd_s - linked list for fd text
+ * struct reader_s - linked list for fd text
  * @fd: The file descriptor associated
- * @text: The buffer static associated to fd
+ * @buf: The buffer static associated to fd
+ * @bytes: info
  * @next: The pointer to the next node
  */
-typedef struct listfd_s
+typedef struct reader_s
 {
 	int fd;
-	char text[BUFF_SIZE];
-	struct listfd_s *next;
-} listfd_t;
+	char *buf;
+	int bytes;
+	struct reader_s *next;
+} reader_t;
 
 char *_getline(const int fd);
-
-char *search(char *str, int c);
-size_t _strlen(char *str);
-listfd_t *nodelist(int fd);
-void findnull(char *str, size_t len, char ope);
+char *find_line(reader_t *rd);
 
 #endif
