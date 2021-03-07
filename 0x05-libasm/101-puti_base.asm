@@ -70,7 +70,7 @@ check_sign:
     cmp sil, -1
     jne print
     dec r10
-    mov BYTE [r8 + r10], '-' 
+    mov BYTE [r8 + r10], '-'
     inc rcx
 
 print:
