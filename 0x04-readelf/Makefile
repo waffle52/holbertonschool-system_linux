@@ -6,8 +6,13 @@ OBJS = $(patsubst %.c, %.o, $(SRC))
 LIBS = $(patsubst %.c, %.o, common.c)
 0 = $(patsubst %.c, %.o, $(wildcard 0-* .c)) $(LIBS)
 1 = $(patsubst %.c, %.o, $(wildcard 1-*.c)) $(LIBS)
-2 = $(patsubst %.c, %.o, $(wildcard 2-*.c)) $(LIBS)
-100 = $(patsubst %.c, %.o, $(wildcard 100-*.c)) $(LIBS)
+
+
+SRC2 = 2-hreadelf.c 2-print_info2.c 2-print_info3.c 2-print_info4.c 2-print_info5.c 2-print_info.c 1-print_header2.c 1-print_header3.c 1-print_header.c
+2 = $(SRC2:.c=.o)
+
+
+100 = $(patsubst %.c, %.o, $(wildcard *.c)) $(LIBS)
 
 .PHONY: 0-hreadelf 1-hreadelf 2-hreadelf 100-hreadelf clean
 

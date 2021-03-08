@@ -127,3 +127,36 @@ void print_section_headers64(elf_t *elf_header, char *string_table)
 		    SGET(i, sh_info),
 		    SGET(i, sh_addralign));
 }
+
+
+/**
+ * print_all_symbol_tables - prints all the symbol table stuff
+ * @elf_header: address of elf header struct
+ * @fd: the file descriptor of our ELF file
+ * Return: 0 on success else exit_status
+ */
+int print_all_symbol_tables(elf_t *elf_header, int fd)
+{
+	char *string_table = NULL;
+	size_t i;
+
+	if (!EGET(e_shnum))
+	{
+		printf("\nThere are no section headers in this file.\n");
+		return (0);
+	}
+	read_section_headers(elf_header, fd);
+	for (i = 0; i < EGET(e_shnum); i++)
+		switch_all_endian_section(elf_header, i);
+	string_table = read_string_table(elf_header, fd);
+	for (i = 0; i < EGET(e_shnum); i++)
+	{
+		if (SGET(i, sh_type) == SHT_DYNSYM ||
+			SGET(i, sh_type) == SHT_SYMTAB)
+		{
+			print_symbol_table(elf_header, fd, i, string_table);
+		}
+	}
+	free(string_table);
+	return (0);
+}
