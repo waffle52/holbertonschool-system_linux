@@ -1,106 +1,72 @@
 BITS 64
+CPU X64
 
-section .bss
+	;;
+	;; asm_puti_base - prints each digit of a signed number in the given base
+	;; to STDOUT using the putc routine that prints one char at a time
+	;;
+	;; Prototype: size_t asm_puti_base(int n, const char *base);
+	;; @n: the signed number to be printed
+	;; @base: a string representing the base
+	;; Return: the number of digits printed
+	;;
 
-    buf     resb        34
+segment .text
+	extern asm_putc, asm_strlen	; Import functions from external file
+	global asm_puti_base		; Define symbol to routine of the same name
 
-extern asm_putc
-extern asm_strlen
-global asm_puti_base
-
-section .text
-
-asm_puti_base:
-
-    push rbp
-    mov rbp, rsp
-    push r8
-    push r9
-    push r10
-    push rcx
-    push rsi
-    push rbx
-
-    mov r8, buf
-    mov r9, rsi
-    mov r10, 32
-    mov BYTE [r8 + 33], 0
-    movsx rdi, edi
-    xor sil, sil
-
-    mov rcx, rdi
-    mov rdi, r9
-    call asm_strlen
-    cmp eax, 2
-    jl print
-    mov rbx, rax
-    mov rdi, rcx
-
-    xor rcx, rcx
-    cmp rdi, 0
-    jl negative
-
-continue:
-
-    mov rax, rdi
-
-do:
-
-    xor rdx, rdx
-    div rbx
-    mov dl, BYTE [r9 + rdx]
-    mov BYTE [r8 + r10], dl
-    inc rcx
-
-while:
-
-    test rax, rax
-    jz check_sign
-    dec r10
-    jmp do
-
-negative:
-
-    imul rdi, -1
-    mov sil, -1
-    jmp continue
-
-check_sign:
-
-    cmp sil, -1
-    jne print
-    dec r10
-    mov BYTE [r8 + r10], '-'
-    inc rcx
-
-print:
-
-    lea r8, [r8 + r10]
-    xor r9, r9
-
-print_loop:
-
-    mov dl, BYTE [r8 + r9]
-    test dl, dl
-    jz end
-    movzx rdi, dl
-    call asm_putc
-    inc r9
-    jmp print_loop
+asm_puti_base:			; Implement asm_put_base function/routine
+	push rbp		; Routine prologue, create new stack frame
+	mov rbp, rsp
+	push rdx		; Save registers that will be overriden
+	push r8
+	push r9
+	push rdi		; Save first function argument
+	mov rdi, rsi		; Use 2nd argument as the 1st to call strlen
+	call asm_strlen		; Call to strlen, measure the length of string
+	pop rdi			; Restore 1st argument
+	push rax		; Save return value of strlen (length) to the stack
+	lea rdx, [rsp]		; Copy a pointer to the length of string (base)
+	xor r9d, r9d		; Start/reset our counter to the number of char printed
+	mov eax, edi		; Copy 1st arg to check its sign (positive or negative)
+	test eax, eax
+	js negative		; If negative jump to subroutine...
+				; Otherwise continue to 'print' subroutine
+print:				; Subroutine to print each digit
+	mov ebx, [rdx]		; Copy the length of string to ebx
+	xor ecx, ecx		; Start a counter
+iloop:	xor edx, edx		; Reset edx to make the division
+	div ebx			; Divide the number (in edx:eax) by length of string
+	sub rsp, 1		; Reserve one byte on stack to put the remainder
+	mov [rsp], dl		; Save the remainder of division (number / length)
+	inc cx			; Increment our counter
+	test eax, eax		; Check when we reach zero
+	jnz iloop		; While not zero, loop
+pstr:	movzx r8d, BYTE [rsp]	; After we reach zero start copying bytes from stack
+	movzx edi, BYTE [rsi + r8] ; in reverse order to be printed
+	call asm_putc		   ; Print each digit
+	add r9b, al		   ; Transfer the result of call to putc to our counter
+	add rsp, 1		   ; Restore each byte from the stack
+	dec cx			   ; Decrement our counter
+	test cx, cx		   ; Check when we reach zero
+	jnz pstr		   ; While not zero, loop
+	mov eax, r9d		   ; When zero, copy the acumulator to return value
 
 end:
+	add rsp, 8		; Remove 8 bytes from stack (used by rax)
+	pop r9			; Restore GPR (General Purpose Registers)
+	pop r8
+	pop rdx
+	mov rsp, rbp		; Routine epilogue, return from stack frame
+	pop rbp
+	ret
 
-    mov rax, r9
-
-    pop rcx
-    pop rbx
-    pop rsi
-    pop rcx
-    pop r10
-    pop r9
-    pop r8
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
+negative:			; Subroutine to deal with negative numbers
+	neg eax			; Make positive (flip sign)
+	push rax		; Preserve the number on stack
+	mov edi, '-'		; Define 1st arg to putc
+	call asm_putc		; Call putc to print the minus sign
+	add r9b, al		; Add the return value to r9 to be returned later
+	pop rax			; Restore the number
+	mov edi, eax		; Use the number as 1st argument to next routine
+	jmp print		; Jump to 'print' subroutine
